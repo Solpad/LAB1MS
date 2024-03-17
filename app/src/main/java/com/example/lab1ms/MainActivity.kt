@@ -119,11 +119,7 @@ private fun MatrixInput(onMatrixEntered: (Array<Array<Int>>) -> Unit) {
 
         Button(
             onClick = {
-                for (i in matrix.indices) {
-                    for (j in 0 until matrix[i].size) {
-                        matrix[i][j].value = ""
-                    }
-                }
+                onClearMatrixButtonClick(onMatrixEntered, matrix, context)
             },
             modifier = Modifier.padding(8.dp)
         ) {
@@ -136,6 +132,25 @@ private fun convertStringMatrixToIntMatrix(stringMatrix: Array<Array<Int>>): Arr
     return stringMatrix.map { row ->
         row.map { it }.toIntArray()
     }.toTypedArray()
+}
+
+private fun onClearMatrixButtonClick(
+    onMatrixEntered: (Array<Array<Int>>) -> Unit,
+    matrix: Array<Array<MutableState<String>>>,
+    context: Context,
+) {
+    try {
+        for (i in matrix.indices) {
+            for (j in 0 until matrix[i].size) {
+                matrix[i][j].value = ""
+            }
+        }
+        val matrixValues = Array(3) { Array(3) { 0 } }
+        onMatrixEntered(matrixValues)
+    } catch (e: Throwable) {
+        Toast.makeText(context, "Что-то пошло не так ;c", Toast.LENGTH_LONG).show()
+    }
+
 }
 
 private fun onSaveMatrixButtonClick(
@@ -161,13 +176,21 @@ private fun onSaveMatrixButtonClick(
 }
 
 private fun onMaximinButtonClick(matrix: Array<Array<Int>>): String {
-    val resolveMatrix = convertStringMatrixToIntMatrix(matrix)
-    return "Максимин заданной матрицы: ${maximin(resolveMatrix)}"
+    return try {
+        val resolveMatrix = convertStringMatrixToIntMatrix(matrix)
+        "Максимин заданной матрицы: ${maximin(resolveMatrix)}"
+    } catch (e: Throwable) {
+        "Что-то пошло не так :c"
+    }
 }
 
 private fun onMinimaxButtonClick(matrix: Array<Array<Int>>): String {
-    val resolveMatrix = convertStringMatrixToIntMatrix(matrix)
-    return "Минимакс заданной матрицы: ${minimax(resolveMatrix)}"
+    return try {
+        val resolveMatrix = convertStringMatrixToIntMatrix(matrix)
+        return "Минимакс заданной матрицы: ${minimax(resolveMatrix)}"
+    } catch (e: Throwable) {
+        "Что-то пошло не так :c"
+    }
 }
 
 private fun isOnlyDigit(word: String): Boolean {
