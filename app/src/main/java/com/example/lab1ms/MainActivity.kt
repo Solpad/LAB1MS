@@ -119,6 +119,15 @@ private fun MatrixInput(onMatrixEntered: (Array<Array<Int>>) -> Unit) {
 
         Button(
             onClick = {
+                onGenereMatrixButtonClick(onMatrixEntered, matrix, context)
+            },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Сгенерировать матрицу")
+        }
+
+        Button(
+            onClick = {
                 onClearMatrixButtonClick(onMatrixEntered, matrix, context)
             },
             modifier = Modifier.padding(8.dp)
@@ -150,7 +159,33 @@ private fun onClearMatrixButtonClick(
     } catch (e: Throwable) {
         Toast.makeText(context, "Что-то пошло не так ;c", Toast.LENGTH_LONG).show()
     }
+}
 
+private fun onGenereMatrixButtonClick(
+    onMatrixEntered: (Array<Array<Int>>) -> Unit,
+    matrix: Array<Array<MutableState<String>>>,
+    context: Context,
+){
+    try {
+        for (i in matrix.indices) {
+            for (j in 0 until matrix[i].size) {
+                matrix[i][j].value = (0..100).random().toString()
+            }
+        }
+        val matrixValues = Array(3) { i ->
+            Array(3) { j ->
+                if (isOnlyDigit(matrix[i][j].value)) {
+                    matrix[i][j].value.toInt()
+                } else {
+                    matrix[i][j].value = removeNonDigits(matrix[i][j].value)
+                    removeNonDigits(matrix[i][j].value).toInt()
+                }
+            }
+        }
+        onMatrixEntered(matrixValues)
+    } catch (e: Throwable) {
+        Toast.makeText(context, "Что-то пошло не так ;c", Toast.LENGTH_LONG).show()
+    }
 }
 
 private fun onSaveMatrixButtonClick(
